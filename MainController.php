@@ -52,13 +52,21 @@ class MainController {
 		
 		// Check feeling forms
 		if ( empty( $file ) || empty( $folderToSave ) ) {
+			echo "<script>";
+			echo "window.location.href='http://csv/index.php?pQAlert=File or folder string is empty. Please feel it.'";
+			echo "</script>";	
+		}
+
+		// Pq
+		$pQ = new PQ( $folderToSave, $file ); // Make new object
+		$pQResponse = $pQ->pQParseLinks(); // Pq parse links
+		 
 		echo "<script>";
-		echo "window.location.href='http://csv/index.php?parseAlert=File or folder string is empty. Please feel it.'";
-		echo "</script>";	
-		}		
+		echo "window.location.href='http://csv/index.php?pQAlert=" . $pQResponse . "'";
+		echo "</script>";		
 	}
 }
 
-$MC = new MainController();
-$MC->mCCheck();
+$mc = new MainController();
+$mc->mCCheck();
 ?>

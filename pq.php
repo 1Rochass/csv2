@@ -6,25 +6,19 @@ class PQ {
 	
 	public $folderToSave; // Folder to save and get html
 	public $file; // File with html for parsing
+	
 	public $html; // Html what we need to parse
-
 
 	public $product; // Product data
 	
-	// Check submit
-	public function pQCheck() {
-
-		if ( isset( $_POST['pQParseSubmit'] ) ) {
-
-			$this->folderToSave = $_POST['folderToSave'];
-			$this->file = $_POST['file']; // File name with html for parsing
-		}
-	}
-
-	public function pQGetHtml() {
+	// Construct
+	public function __construct( $folderToSave, $file ) {
+		$this->folderToSave = $folderToSave;
+		$this->file = $file; // File name with html for parsing
+		
 		// Get html for parsing 
 		$this->html = file_get_contents( $this->folderToSave . "/" . $this->file );
-	}
+	}	
 
 	// pQ save text to csv file
 	public function pQsave( $data=NULL) {
@@ -53,6 +47,11 @@ class PQ {
 			$links[] = $a->attr( "href" );
 		}
 
+		// Check parsing links
+		if ( count( $links ) == 0 ) {
+			return "0 links has parsed";
+		}
+
 		// Save products links
 		$links = array_unique( $links ); // Make unique links
 
@@ -62,6 +61,8 @@ class PQ {
 		$file = fopen( $this->folderToSave . "/links_" . $fileName, "w+" ); // Open file
 		fwrite( $file, implode("\r\n", $links) ); // Write data
 		fclose( $file ); // Close file
+
+		return count( $links ) . " links has parsed";
 	} 
 
 	// Parse images 

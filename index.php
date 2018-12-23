@@ -36,7 +36,7 @@
 				<label for="folder-to-save">Folder to save
 					<input type="text" name="folderToSave" id="folder-to-save" value="parse-directory">
 				</label>
-				<input type="submit" name="pQSubmit" value="Parse">
+				<input type="submit" name="pQLinksSubmit" value="Parse">
 				<label class="pq-alert">
 					<?php 
 						if ( isset( $_GET['pQAlert'] ) ) {
