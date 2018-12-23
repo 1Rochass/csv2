@@ -8,7 +8,7 @@
 <div class="wrapper">
 	<div class="content">
 		<div class="curl">
-			<form method="POST" action="curl.php">
+			<form method="POST" action="MainController.php">
 				<label for="url-to-parse">URL to parse
 					<input type="text" name="urlToParse" id="url-to-parse">
 				</label>
@@ -18,7 +18,7 @@
 				<label for="folder-to-save">Folder to save
 					<input type="text" name="folderToSave" id="folder-to-save" value="parse-directory">
 				</label>
-				<input type="submit" name="parseSubmit" value="Parse">
+				<input type="submit" name="curlSubmit" value="Parse">
 				<label class="parse-alert">
 					<?php 
 						if ( isset( $_GET['parseAlert'] ) ) {
@@ -29,14 +29,14 @@
 			</form>
 		</div>
 		<div class="PQ">
-			<form method="POST" action="pq.php">
+			<form method="POST" action="MainController.php">
 				<label for="file">File
 					<?php require_once "show-files.php" ?>	
 				</label>
 				<label for="folder-to-save">Folder to save
 					<input type="text" name="folderToSave" id="folder-to-save" value="parse-directory">
 				</label>
-				<input type="submit" name="pQParseSubmit" value="Parse">
+				<input type="submit" name="pQSubmit" value="Parse">
 				<label class="pq-alert">
 					<?php 
 						if ( isset( $_GET['pQAlert'] ) ) {

@@ -136,12 +136,12 @@ class PQ {
 
 }
 
-$pq = new PQ();
-$pq->pQCheck();
-$pq->pQGetHtml();
-// Run pQParse
-// $pq->pQParseImages();
-// $pq->pQParseProduct();
-$pq->pQParseLinks();
+// $pq = new PQ();
+// $pq->pQCheck();
+// $pq->pQGetHtml();
+// // Run pQParse
+// // $pq->pQParseImages();
+// // $pq->pQParseProduct();
+// $pq->pQParseLinks();
 
 ?>

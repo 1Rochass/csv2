@@ -14,10 +14,20 @@ class Curl {
 	public $curl_proxy;
 	public $curl_proxy_path = "proxy.txt";
 
+	// Construct
+	public function __construct( $urlToParse, $folderToSave, $fileToSave ) {
+		$this->urlToParse = $urlToParse;
+		$this->folderToSave = $folderToSave;
+		$this->fileToSave = $fileToSave;
+		
+		// Make file name where your must to save parsed html
+		$this->fileToSave = "html_" . $this->fileToSave . ".txt";
+	}
+
 	// Curl parse
-	public function curlParse( $url )
+	public function curlParse( )
 	{
-		$ch = curl_init( $url );
+		$ch = curl_init( $this->urlToParse );
 
 		curl_setopt( $ch, CURLOPT_RETURNTRANSFER, true ); // Сейвит результат в переменную
 
@@ -32,11 +42,10 @@ class Curl {
 		
 
 		// curl_setopt( $ch, CURLOPT_PROXY, '93.113.6.19' ); // хз 
-		// http://free-proxy.cz
-	
+		// http://free-proxy.cz	
 		curl_setopt( $ch, CURLOPT_PROXYTYPE, CURLPROXY_SOCKS4 ); // хз
 
-		
+
 
 		curl_setopt( $ch, CURLOPT_SSL_VERIFYHOST, false ); // Отключает проверки в https
 
@@ -46,50 +55,25 @@ class Curl {
 
 		curl_close( $ch );
 
-		 $this->html = $html;
+		$this->html = $html;
 
 	} 
 
-	// Check submit
-	public function curlCheck() {
-		if ( isset( $_POST['parseSubmit'] ) ) {
-			$this->urlToParse = $_POST['urlToParse'];
-			$this->folderToSave = $_POST['folderToSave'];
-			$this->fileToSave = $_POST['fileToSave']; 
-
-		}
-		// Check feeling forms
-		if ( empty( $this->urlToParse ) || empty( $this->folderToSave ) ||  empty( $this->fileToSave ) ) {
-			echo "<script>";
-			echo "window.location.href='http://csv/index.php?parseAlert=URL, file or folder string is empty. Please feel it.'";
-			echo "</script>";	
-		}
-
-		// Make file name where your must to save parsed html
-		$this->fileToSave = "html_" . $this->fileToSave . ".txt";
-
-		$this->curlRun();
-	}
-
-	// Curl run
-	public function curlRun( )
+	// Curl save html
+	public function curlSave( )
 	{
-		$html = $this->curlParse( $this->urlToParse );
 
 		if ( file_put_contents( $this->folderToSave . "/" . $this->fileToSave, $this->html ) ) {
-			echo "<script>";
-			echo "window.location.href='http://csv/index.php?parseAlert=Parsed html was saved in " . $this->folderToSave . "'";
-			echo "</script>";
+			
+			return "Parsed html was saved in " . $this->folderToSave;
+			
 		}
 		else {
-			echo "<script>";
-			echo "window.location.href='http://csv/index.php?parseAlert=Parsed html was not saved'";
-			echo "</script>";	
+			
+			return "Parsed html was not saved";
+				
 		}
 	}
 
 }
-
-$curl = new Curl();
-$curl->curlCheck();
 ?>
