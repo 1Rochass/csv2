@@ -1,0 +1,59 @@
+html, body {
+	padding: 0;
+	margin: 0;
+	height: 100%;
+}
+body {
+	font-size: 100%;
+	min-height: 100%;
+	position: relative;
+}
+
+/* Wrapper */
+.wrapper {
+	
+}
+
+/* Content*/
+.contetnt {
+	padding-bottom: 30px;
+}
+
+	/* Curl */
+	.curl {
+		float: left;
+		margin: 1rem 0 0 1%;
+		border: 0.1rem dashed black;
+		padding: 0.5%;
+		width: 47%;
+	}
+		.curl input, label {
+			display: block;
+			margin: 1rem 0 0 0;
+		}
+
+	/* PQ */
+	.PQ {
+		float: left;
+		border: 0.1rem dashed black;
+		padding: 0.5%;
+		width: 48%;
+		margin: 1rem 0 0 1%;
+	}
+		.PQ input, label {
+			display: block;
+			margin: 1rem 0 0 0;
+		}
+		.pq-radio {
+			position: absolute;
+			margin: -1rem 0 0 1.5rem;
+		}
+
+/* Footer */
+.footer {
+	position: absolute;
+	bottom: 0px;
+	height: 30px;
+	margin: 0 0 0 1%;
+	width: 99%;
+}
