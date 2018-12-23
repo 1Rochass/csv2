@@ -8,6 +8,7 @@
 <div class="wrapper">
 	<div class="content">
 		<div class="curl">
+			<h2>Curl</h2>
 			<form method="POST" action="MainController.php">
 				<label for="url-to-parse">URL to parse
 					<input type="text" name="urlToParse" id="url-to-parse">
@@ -28,10 +29,11 @@
 				</label>
 			</form>
 		</div>
-		<div class="PQ">
+		<div class="PQLinks">
+			<h2>PQLinks</h2>
 			<form method="POST" action="MainController.php">
 				<label for="file">File
-					<?php require_once "show-files.php" ?>	
+					<?php require "show-files.php" ?>	
 				</label>
 				<label for="folder-to-save">Folder to save
 					<input type="text" name="folderToSave" id="folder-to-save" value="parse-directory">
@@ -41,6 +43,25 @@
 					<?php 
 						if ( isset( $_GET['pQAlert'] ) ) {
 							echo $_GET['pQAlert'];
+						}
+					 ?>
+				</label>
+			</form>
+		</div>
+		<div class="PQGoods">
+			<h2>PQGoods</h2>
+			<form method="POST" action="MainController.php">
+				<label for="file">File
+					<?php require "show-files.php" ?>	
+				</label>
+				<label for="folder-to-save">Folder to save
+					<input type="text" name="folderToSave" id="folder-to-save" value="parse-directory">
+				</label>
+				<input type="submit" name="pQGoodsSubmit" value="Parse">
+				<label class="pq-goods-alert">
+					<?php 
+						if ( isset( $_GET['pQGoodsAlert'] ) ) {
+							echo $_GET['pQGoodsAlert'];
 						}
 					 ?>
 				</label>

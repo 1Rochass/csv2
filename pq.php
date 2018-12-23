@@ -16,8 +16,6 @@ class PQ {
 		$this->folderToSave = $folderToSave;
 		$this->file = $file; // File name with html for parsing
 		
-		// Get html for parsing 
-		$this->html = file_get_contents( $this->folderToSave . "/" . $this->file );
 	}	
 
 	// pQ save text to csv file
@@ -35,6 +33,9 @@ class PQ {
 
 	// Parse links
 	public function pQParseLinks () {
+
+		// Get html for parsing 
+		$this->html = file_get_contents( $this->folderToSave . "/" . $this->file );
 		// Make main object
 		$pq = phpQuery::newDocument( $this->html );
 		// Find "a" tags from class ".products"
@@ -99,10 +100,10 @@ class PQ {
 
 
 	// Parse product
-	public function pQParseProduct () {
+	public function pQParseProduct ( $html ) {
 
 		// Make main phpquery object
-		$pq = phpQuery::newDocument( $this->html );
+		$pq = phpQuery::newDocument( $html );
 
 		// Parse product-name
 		$element = $pq->find( ".product_title" ); //Find element
@@ -126,12 +127,9 @@ class PQ {
 		// Add data to product array
 		$this->product[] = $productPrice;
 
+		return $this->product;
 
-
-		// Save data to csv file
-		$this->pQsave( $this->product );
-
-
+		
 
 	}
 

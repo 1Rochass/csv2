@@ -57,6 +57,8 @@ class Curl {
 
 		$this->html = $html;
 
+		return $html;
+
 	} 
 
 	// Curl save html
