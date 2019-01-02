@@ -12,7 +12,7 @@ class PQ {
 	public $product; // Product data
 	
 	// Construct
-	public function __construct( $folderToSave, $file ) {
+	public function __construct( $folderToSave=NULL, $file=NULL ) {
 		$this->folderToSave = $folderToSave;
 		$this->file = $file; // File name with html for parsing
 		
@@ -73,7 +73,7 @@ class PQ {
 		$pq = phpQuery::newDocument( $this->html );
 
 
-		$element = $pq->find(".views2-img img");
+		$element = $pq->find(".woocommerce-product-gallery__image img");
 		
 		// Get attr from DOM element!!!
 		foreach ($element as $value) {
@@ -83,10 +83,7 @@ class PQ {
 
 
 			// Get image link
-			$src = $attr->attr("src");
-			
-
-			$src = "http://csv/sait-to-parse/" . $src; 
+			$src = $attr->attr("data-large_image");
 
 			// Basename for saving
 			$imgBaseName = basename( $src );
@@ -95,12 +92,23 @@ class PQ {
 			$img = file_get_contents( $src );
 			file_put_contents( "img/" . $imgBaseName, $img );
 
+
+			// csv
+			//$this->product['product_images'] = $src;
+
+
 		}
 	}
+
+	
 
 
 	// Parse product
 	public function pQParseProduct ( $html ) {
+
+
+		// Assign a value to the property
+		$this->html = $html;
 
 		// Make main phpquery object
 		$pq = phpQuery::newDocument( $html );
@@ -119,13 +127,16 @@ class PQ {
 		// !!! Only for st-ok.u delete some data before parse
 		$pq->find( ".columns-3" )->remove(); 
 		
-
 		$element = $pq->find( ".price .woocommerce-Price-amount" ); //Find element
 		$productPrice = $element->text(); // Get text from element
 		// New product in csv file begin from \n
 		$productPrice = "," . $productPrice;
 		// Add data to product array
 		$this->product[] = $productPrice;
+
+
+		// Parse images
+		$this->pQParseImages();
 
 		return $this->product;
 
@@ -136,6 +147,7 @@ class PQ {
 }
 
 // $pq = new PQ();
+// $pq->testPQParseImages();
 // $pq->pQCheck();
 // $pq->pQGetHtml();
 // // Run pQParse
