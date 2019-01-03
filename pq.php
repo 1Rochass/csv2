@@ -94,7 +94,7 @@ class PQ {
 
 
 			// csv
-			//$this->product['product_images'] = $src;
+			$this->product['product_images'] = $src;
 
 
 		}
@@ -113,35 +113,55 @@ class PQ {
 		// Make main phpquery object
 		$pq = phpQuery::newDocument( $html );
 
-		// Parse product-name
-		$element = $pq->find( ".product_title" ); //Find element
-		$productName = $element->text(); // Get text from element
-		// New product in csv file begin from \n
-		$productName = "\r" . $productName;
-		// Add data to product array
-		$this->product[] = $productName;
 
+		// ID, Type, article
+			$this->product['ID_Type_article'] = ",simple,,";
 
-		// Parse product-price         ,product-short-description
-		
-		// !!! Only for st-ok.u delete some data before parse
-		$pq->find( ".columns-3" )->remove(); 
-		
-		$element = $pq->find( ".price .woocommerce-Price-amount" ); //Find element
-		$productPrice = $element->text(); // Get text from element
-		// New product in csv file begin from \n
-		$productPrice = "," . $productPrice;
-		// Add data to product array
-		$this->product[] = $productPrice;
+		// Name
+			$element = $pq->find( ".product_title" ); //Find element
+			$productName = $element->text(); // Get text from element
+			// Add data to product array
+			$this->product['name'] = $productName;
 
+		// Published, recommended?, Visibility in directory
+			$this->product['Properties_0'] = ",1,0,visible,";
+
+		// Short description
+			$this->product['Short_description'] = "";	
+
+		// Description
+			$this->product['Description'] = "";	
+
+		// Effective date of the sales price", "effective date of the sales price","tax Status","Tax class", " available?", Stocks,"Small quantity in stock", " Delayed order is possible?", "Sold individually?", "Weight (kg)","Length (cm)","Width (cm)","Height (cm)", " Allow feedback from customers?", "Note to purchase", " sale Price
+			$this->product['Properties_1'] = ",,,taxable,,1,,,0,0,,,,,1,,,";
+
+		// Base price
+			// !!! Only for st-ok.u delete some data before parse
+			$pq->find( ".columns-3" )->remove(); 
+			
+			$element = $pq->find( ".price .woocommerce-Price-amount" ); //Find element
+			$productPrice = $element->text(); // Get text from element
+			// New product in csv file begin from \n
+			$productPrice = "," . $productPrice;
+			// Add data to product array
+			$this->product['Base_price'] = $productPrice;
+
+		// Categories
+			$this->product['Categories'] = "";
+
+		// Tags, shipping Class
+			$this->product['Tags_shippingClass'] = ",,,";
 
 		// Parse images
-		$this->pQParseImages();
+			$this->pQParseImages();
 
-		return $this->product;
+			return $this->product;
 
+		// Download limit","number of days before overdue download",Parent, "Grouped products", Upsale, cross-Sell, "External URL", "button Text", Position
+			$this->product['Properties_2'] = ",,,,,,,,,0,";		
 		
-
+		// Meta: yikes_woo_products_tabs
+			$this->product['Meta_yikes_woo_products_tabs'] = "";	
 	}
 
 }
