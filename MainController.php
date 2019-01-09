@@ -27,7 +27,7 @@ class MainController {
 		// Check feeling forms
 		if ( empty( $urlToParse ) || empty( $folderToSave ) ||  empty( $fileToSave ) ) {
 			echo "<script>";
-			echo "window.location.href='http://csv/index.php?parseAlert=URL, file or folder string is empty. Please feel it.'";
+			echo "window.location.href='http://csv2/index.php?parseAlert=URL, file or folder string is empty. Please feel it.'";
 			echo "</script>";	
 		}
 
@@ -39,7 +39,7 @@ class MainController {
 
 
 		echo "<script>";
-		echo "window.location.href='http://csv/index.php?parseAlert=" . $curlResponse . "'";
+		echo "window.location.href='http://csv2/index.php?parseAlert=" . $curlResponse . "'";
 		echo "</script>";
 
 	}
@@ -53,7 +53,7 @@ class MainController {
 		// Check feeling forms
 		if ( empty( $file ) || empty( $folderToSave ) ) {
 			echo "<script>";
-			echo "window.location.href='http://csv/index.php?pQAlert=File or folder string is empty. Please feel it.'";
+			echo "window.location.href='http://csv2/index.php?pQAlert=File or folder string is empty. Please feel it.'";
 			echo "</script>";	
 		}
 
@@ -62,7 +62,7 @@ class MainController {
 		$pQResponse = $pQ->pQParseLinks(); // Pq parse links
 		 
 		echo "<script>";
-		echo "window.location.href='http://csv/index.php?pQAlert=" . $pQResponse . "'";
+		echo "window.location.href='http://csv2/index.php?pQAlert=" . $pQResponse . "'";
 		echo "</script>";		
 	}
 
@@ -75,7 +75,7 @@ class MainController {
 		// Check feeling forms
 		if ( empty( $file ) || empty( $folderToSave ) ) {
 			echo "<script>";
-			echo "window.location.href='http://csv/index.php?pQGoodsAlert=File or folder string is empty. Please feel it.'";
+			echo "window.location.href='http://csv2/index.php?pQGoodsAlert=File or folder string is empty. Please feel it.'";
 			echo "</script>";	
 		}
 
@@ -84,7 +84,8 @@ class MainController {
 		$links = explode( "\r\n", $html ); // Make array of links
 		$links = array_diff( $links, array('') ); // Delete empty elements
 		
-
+		
+		
 		foreach ( $links as $link ) {
 			// Curl
 			$curl = new Curl( $link, $folderToSave, $fileToSave ); // Make new object
@@ -94,7 +95,7 @@ class MainController {
 			$pQ = new PQ( $folderToSave, $file ); // Make new object
 			$pQResponse = $pQ->pQParseProduct( $curlResponse ); // Pq parse and get product
 
-
+			
 			$pQ->pQsave( $pQResponse ); // Save data to csv file
 
 		}

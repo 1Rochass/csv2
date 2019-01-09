@@ -6,6 +6,8 @@ class PQ {
 	
 	public $folderToSave; // Folder to save and get html
 	public $file; // File with html for parsing
+	public $csvFolder = "csv/"; // Folder where you can save csv file
+	public $csvFile; //  Csv file
 	
 	public $html; // Html what we need to parse
 
@@ -15,16 +17,57 @@ class PQ {
 	public function __construct( $folderToSave=NULL, $file=NULL ) {
 		$this->folderToSave = $folderToSave;
 		$this->file = $file; // File name with html for parsing
-		
+
+		// Make csv filename
+		$arrayToReplace = ['links_','.txt']; // We must delete this sufix and prefix to make csv filename
+		$csvFilename = str_replace( $arrayToReplace, "", $file ); // del unnesessary sufix and prefix
+		$this->csvFile = $csvFilename . ".csv"; // add type to file
 	}	
 
 	// pQ save text to csv file
-	public function pQsave( $data=NULL) {
+	public function pQsave( $product=NULL ) {
 
-		// Make string from array
-		$string = implode( "", $data );
+		// Save csv part of the begin into file
+		$properties = "ID,Тип,Артикул,Имя,Опубликован,рекомендуемый?,\"Видимость в каталоге\",\"Короткое описание\",Описание,\"Дата начала действия продажной цены\",\"Дата окончания действия продажной цены\",\"Статус налога\",\"Налоговый класс\",\"В наличии?\",Запасы,\"Малое количество на складе\",\"Задержанный заказ возможен?\",\"Продано индивидуально?\",\"Вес (kg)\",\"Длина (cm)\",\"Ширина (cm)\",\"Высота (cm)\",\"Разрешить отзывы от клиентов?\",\"Примечание к покупке\",\"Цена распродажи\",\"Базовая цена\",Категории,Метки,\"Класс доставки\",Изображения,\"Лимит загрузок\",\"Число дней до просроченной загрузки\",Родительский,\"Сгруппированные товары\",Апсейл,Кросселы,\"Внешний URL\",\"Текст кнопки\",Позиция,\"Мета: yikes_woo_products_tabs\" \r\n";
 
-		$file = fopen( "csv/products.csv", "a+" );
+		// We must add this string only once
+		if ( !file_get_contents( $this->csvFolder . $this->csvFile ) ) {
+			$file = fopen( $this->csvFolder . $this->csvFile, "a+" );
+			fwrite( $file, $properties );
+			fclose( $file );
+
+
+		}
+		
+
+		// Save csv properties into file
+		foreach ( $product as $property) {
+			// If array 
+			if ( is_array( $property ) ) {
+				
+					// Make string from array 
+					$string = implode( ", ", $property ); // ", " - for img hrefs in csv
+					// It is need for woocommerce csv file
+					$string = "\"" . $string . "\"";
+
+					// Save data to file
+					$file = fopen( $this->csvFolder . $this->csvFile, "a+" );
+					fwrite( $file, $string );
+					fclose( $file );			
+				
+			}
+			else {
+				// Save data to file
+				$file = fopen( $this->csvFolder . $this->csvFile, "a+" );
+				fwrite( $file, $property );
+				fclose( $file );
+			}
+		}	
+
+		// Save csv part of the end into file
+		$string = "\r\n";
+
+		$file = fopen( $this->csvFolder . $this->csvFile, "a+" );
 		fwrite( $file, $string );
 		fclose( $file );
 	}
@@ -94,7 +137,7 @@ class PQ {
 
 
 			// csv
-			$this->product['product_images'] = $src;
+			$this->product['product_images'][] = $src;
 
 
 		}
@@ -121,33 +164,43 @@ class PQ {
 			$element = $pq->find( ".product_title" ); //Find element
 			$productName = $element->text(); // Get text from element
 			// Add data to product array
-			$this->product['name'] = $productName;
+			$this->product['name'] = "\"" . $productName . "\"";
 
 		// Published, recommended?, Visibility in directory
 			$this->product['Properties_0'] = ",1,0,visible,";
 
 		// Short description
-			$this->product['Short_description'] = "";	
+			$element = $pq->find( ".woocommerce-product-details__short-description" );
+			$ShortDescription = $element->text();
+			$this->product['Short_description'] = "\"" . $ShortDescription . "\"";
 
 		// Description
-			$this->product['Description'] = "";	
+			$element = $pq->find( ".woocommerce-Tabs-panel--description p" );
+			$Description = $element->text();
+			$this->product['Description'] = ",\"" . $Description . "\"";	
 
 		// Effective date of the sales price", "effective date of the sales price","tax Status","Tax class", " available?", Stocks,"Small quantity in stock", " Delayed order is possible?", "Sold individually?", "Weight (kg)","Length (cm)","Width (cm)","Height (cm)", " Allow feedback from customers?", "Note to purchase", " sale Price
 			$this->product['Properties_1'] = ",,,taxable,,1,,,0,0,,,,,1,,,";
-
+											
 		// Base price
 			// !!! Only for st-ok.u delete some data before parse
 			$pq->find( ".columns-3" )->remove(); 
 			
 			$element = $pq->find( ".price .woocommerce-Price-amount" ); //Find element
 			$productPrice = $element->text(); // Get text from element
-			// New product in csv file begin from \n
-			$productPrice = "," . $productPrice;
+			// Del unnesessary parts from record of price
+
+			$productPrice = htmlentities( $productPrice );
+			$del = [',', '&nbsp;', 'руб.'];
+			$productPrice = str_replace( $del, "", $productPrice );
+
 			// Add data to product array
 			$this->product['Base_price'] = $productPrice;
 
 		// Categories
-			$this->product['Categories'] = "";
+			$element = $pq->find( ".posted_in a" );
+			$Categories = $element->text();
+			$this->product['Categories'] = "," . $Categories;
 
 		// Tags, shipping Class
 			$this->product['Tags_shippingClass'] = ",,,";
@@ -155,13 +208,73 @@ class PQ {
 		// Parse images
 			$this->pQParseImages();
 
-			return $this->product;
-
 		// Download limit","number of days before overdue download",Parent, "Grouped products", Upsale, cross-Sell, "External URL", "button Text", Position
 			$this->product['Properties_2'] = ",,,,,,,,,0,";		
 		
 		// Meta: yikes_woo_products_tabs
-			$this->product['Meta_yikes_woo_products_tabs'] = "";	
+			$element = $pq->find( ".woocommerce-Tabs-panel" );
+
+			foreach ($element as $value) {
+				$div = pq( $value );	
+				$woocommerceTabs[] = $div->html();
+			}
+			
+			// Because all of tabs have the same classes name we must highlight second and 
+			// other divs by count
+			// Second div will be technic haracteristic and third will be passport 
+			// These all for st-ok.ru site
+			if ( array_key_exists( 1, $woocommerceTabs ) ) {
+
+				
+
+
+				// // Begin of tab plugin export/import text
+				// $begin = "\"a:1:{i:0;a:3:{s:5:'title';s:51:'Технические характеристики';s:2:'id';s:27:'tehnicheskie-harakteristiki';s:7:'content';s:5429:'";
+				// $begin = str_replace( "'", "\"\"", $begin );
+				// // Content of tab plugin export/import text
+
+				// $content =  $woocommerceTabs[1];
+				// $content = str_replace( "\n", "", $woocommerceTabs[1] ); // Del all \n
+
+				// $content = str_replace( "\"", "\"\"", $content ); 
+				// End of tab plugin export/import text
+				// $end = "\"\";}}\"";
+
+				// $string = $content;
+				// $len = strlen( $string );
+				// echo $len;
+				// exit();
+
+				// Connect all parts of tab plugin text
+				// $woocommerceTab = $begin . $content . $end;
+
+				// We must serialize our data for WP Tabs plugin 
+				$woocommerceTab[0]['title'] = "Технические характеристики"; // For serialize
+				$woocommerceTab[0]['id'] = "tehnicheskie-harakteristiki"; // For serialize
+
+				// phpQuery here we get <table> with properities. It is content for product tab
+				$content = phpQuery::newDocument( $woocommerceTabs[1] );
+				$content = $content->find( "table" );
+				//$content = $content->html();
+
+				
+				$content = str_replace( "\n", "", $content ); // Del all \n
+				$woocommerceTab[0]['content'] = $content; // For serialize
+
+				$woocommerceTab = serialize( $woocommerceTab ); // Serialize our data 
+				$woocommerceTab = str_replace( "\"", "\"\"", $woocommerceTab ); // It is need for WP Tabs plugin
+
+				$this->product['Meta_yikes_woo_products_tabs'] = "\"" . $woocommerceTab . "\"";	
+			}
+			if ( array_key_exists( 2, $woocommerceTabs ) ) {
+				
+			}
+
+			
+
+
+		// Return data to MainConroller
+		return $this->product;
 	}
 
 }

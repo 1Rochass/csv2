@@ -1,6 +1,7 @@
 <!DOCTYPE html>
-<html>
+<html lang="ru">
 <head>
+	<meta charset="utf-8">
 	<link rel="stylesheet" type="text/css" href="css/style.css">
 	<title></title>
 </head>
@@ -54,7 +55,7 @@
 				<label for="file">File
 					<?php require "show-files.php" ?>	
 				</label>
-				<label for="folder-to-save">Folder to save
+				<label for="folder-to-save">Folder with links files
 					<input type="text" name="folderToSave" id="folder-to-save" value="parse-directory">
 				</label>
 				<input type="submit" name="pQGoodsSubmit" value="Parse">
