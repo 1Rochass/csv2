@@ -8,6 +8,7 @@ class PQ {
 	public $file; // File with html for parsing
 	public $csvFolder = "csv/"; // Folder where you can save csv file
 	public $csvFile; //  Csv file
+	public $imgFolder; // Folder for img files
 	
 	public $html; // Html what we need to parse
 
@@ -15,29 +16,36 @@ class PQ {
 	
 	// Construct
 	public function __construct( $folderToSave=NULL, $file=NULL ) {
-		$this->folderToSave = $folderToSave;
+		// Folder
+		$this->folderToSave = $folderToSave; // Folder to save and get html
 		$this->file = $file; // File name with html for parsing
 
 		// Make csv filename
 		$arrayToReplace = ['links_','.txt']; // We must delete this sufix and prefix to make csv filename
 		$csvFilename = str_replace( $arrayToReplace, "", $file ); // del unnesessary sufix and prefix
 		$this->csvFile = $csvFilename . ".csv"; // add type to file
+
+		// Make img folder
+		$this->imgFolder = $csvFilename; 
+
 	}	
+
+	public function pQMakeFile (){
+		if ( !file_exists( $this->csvFolder . $this->csvFile ) ) {
+			// Save csv part of the begin into file
+			$properties = "ID,Тип,Артикул,Имя,Опубликован,рекомендуемый?,\"Видимость в каталоге\",\"Короткое описание\",Описание,\"Дата начала действия продажной цены\",\"Дата окончания действия продажной цены\",\"Статус налога\",\"Налоговый класс\",\"В наличии?\",Запасы,\"Малое количество на складе\",\"Задержанный заказ возможен?\",\"Продано индивидуально?\",\"Вес (kg)\",\"Длина (cm)\",\"Ширина (cm)\",\"Высота (cm)\",\"Разрешить отзывы от клиентов?\",\"Примечание к покупке\",\"Цена распродажи\",\"Базовая цена\",Категории,Метки,\"Класс доставки\",Изображения,\"Лимит загрузок\",\"Число дней до просроченной загрузки\",Родительский,\"Сгруппированные товары\",Апсейл,Кросселы,\"Внешний URL\",\"Текст кнопки\",Позиция,\"Мета: yikes_woo_products_tabs\" \r\n";
+
+			// We must add this properties only once
+			$file = fopen( $this->csvFolder . $this->csvFile, "a+" );
+			fwrite( $file, $properties );
+			fclose( $file );
+		}
+	}
 
 	// pQ save text to csv file
 	public function pQsave( $product=NULL ) {
 
-		// Save csv part of the begin into file
-		$properties = "ID,Тип,Артикул,Имя,Опубликован,рекомендуемый?,\"Видимость в каталоге\",\"Короткое описание\",Описание,\"Дата начала действия продажной цены\",\"Дата окончания действия продажной цены\",\"Статус налога\",\"Налоговый класс\",\"В наличии?\",Запасы,\"Малое количество на складе\",\"Задержанный заказ возможен?\",\"Продано индивидуально?\",\"Вес (kg)\",\"Длина (cm)\",\"Ширина (cm)\",\"Высота (cm)\",\"Разрешить отзывы от клиентов?\",\"Примечание к покупке\",\"Цена распродажи\",\"Базовая цена\",Категории,Метки,\"Класс доставки\",Изображения,\"Лимит загрузок\",\"Число дней до просроченной загрузки\",Родительский,\"Сгруппированные товары\",Апсейл,Кросселы,\"Внешний URL\",\"Текст кнопки\",Позиция,\"Мета: yikes_woo_products_tabs\" \r\n";
-
-		// We must add this string only once
-		if ( !file_get_contents( $this->csvFolder . $this->csvFile ) ) {
-			$file = fopen( $this->csvFolder . $this->csvFile, "a+" );
-			fwrite( $file, $properties );
-			fclose( $file );
-
-
-		}
+		
 		
 
 		// Save csv properties into file
@@ -133,7 +141,14 @@ class PQ {
 
 			// Make and save piccture
 			$img = file_get_contents( $src );
-			file_put_contents( "img/" . $imgBaseName, $img );
+
+			// Make folder to save img
+			if ( !is_dir( "img/" . $this->imgFolder )) {
+				mkdir( "img/" . $this->imgFolder );	
+			}
+			
+			// Save img
+			file_put_contents( "img/" . $this->imgFolder . "/" . $imgBaseName, $img );
 
 
 			// csv

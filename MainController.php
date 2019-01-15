@@ -95,7 +95,7 @@ class MainController {
 			$pQ = new PQ( $folderToSave, $file ); // Make new object
 			$pQResponse = $pQ->pQParseProduct( $curlResponse ); // Pq parse and get product
 
-			
+			$pQ->pQMakeFile();
 			$pQ->pQsave( $pQResponse ); // Save data to csv file
 
 		}
