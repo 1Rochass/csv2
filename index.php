@@ -3,6 +3,7 @@
 <head>
 	<meta charset="utf-8">
 	<link rel="stylesheet" type="text/css" href="css/style.css">
+	<script src="http://code.jquery.com/jquery-3.3.1.js" integrity="sha256-2Kok7MbOyxpgUVvAk/HJ2jigOSYS2auK4Pfzbm7uH60=" crossorigin="anonymous"></script>
 	<title></title>
 </head>
 <body>
@@ -14,64 +15,33 @@
 				<label for="url-to-parse">URL to parse
 					<input type="text" name="urlToParse" id="url-to-parse">
 				</label>
-				<label for="file-to-save">File to save
+				<!-- <label for="file-to-save">File to save
 					<input type="text" name="fileToSave" id="file-to-save">
 				</label>
 				<label for="folder-to-save">Folder to save
 					<input type="text" name="folderToSave" id="folder-to-save" value="parse-directory">
-				</label>
+				</label> -->
 				<input type="submit" name="curlSubmit" value="Parse">
 				<label class="parse-alert">
 					<?php 
-						if ( isset( $_GET['parseAlert'] ) ) {
-							echo $_GET['parseAlert'];
+						if ( isset( $_GET['Alert'] ) ) {
+							echo $_GET['Alert'];
 						}
 					 ?>
 				</label>
 			</form>
 		</div>
-		<div class="PQLinks">
-			<h2>PQLinks</h2>
-			<form method="POST" action="MainController.php">
-				<label for="file">File
-					<?php require "show-files.php" ?>	
-				</label>
-				<label for="folder-to-save">Folder to save
-					<input type="text" name="folderToSave" id="folder-to-save" value="parse-directory">
-				</label>
-				<input type="submit" name="pQLinksSubmit" value="Parse">
-				<label class="pq-alert">
-					<?php 
-						if ( isset( $_GET['pQAlert'] ) ) {
-							echo $_GET['pQAlert'];
-						}
-					 ?>
-				</label>
-			</form>
-		</div>
+		
 		<div class="PQGoods">
-			<h2>PQGoods</h2>
-			<form method="POST" action="MainController.php">
-				<label for="file">File
-					<?php require "show-files.php" ?>	
-				</label>
-				<label for="folder-to-save">Folder with links files
-					<input type="text" name="folderToSave" id="folder-to-save" value="parse-directory">
-				</label>
-				<input type="submit" name="pQGoodsSubmit" value="Parse">
-				<label class="pq-goods-alert">
-					<?php 
-						if ( isset( $_GET['pQGoodsAlert'] ) ) {
-							echo $_GET['pQGoodsAlert'];
-						}
-					 ?>
-				</label>
-			</form>
+			<h2>Files</h2>
+			<div id="files"></div>
+			<div id="alerts"></div>
 		</div>
 	</div>
 	<div class="footer">
 		Some text
 	</div>
 </div>
+<script type="text/javascript" src="script.js"></script>
 </body>
 </html>

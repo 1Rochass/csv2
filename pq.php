@@ -20,18 +20,38 @@ class PQ {
 		$this->folderToSave = $folderToSave; // Folder to save and get html
 		$this->file = $file; // File name with html for parsing
 
-		// Make csv filename
-		$arrayToReplace = ['links_','.txt']; // We must delete this sufix and prefix to make csv filename
-		$csvFilename = str_replace( $arrayToReplace, "", $file ); // del unnesessary sufix and prefix
-		$this->csvFile = $csvFilename . ".csv"; // add type to file
+		
+
+		// // Make csv filename
+		// $arrayToReplace = ['links_','.txt']; // We must delete this sufix and prefix to make csv filename
+		// $csvFilename = str_replace( $arrayToReplace, "", $file ); // del unnesessary sufix and prefix
+		// $this->csvFile = $csvFilename . ".csv"; // add type to file
+
 
 		// Make img folder
 		$this->imgFolder = $csvFilename; 
 
 	}	
 
-	public function pQMakeFile (){
+
+	/*
+	*  Make file
+	*/
+	public function pQMakeFile ( $file ){
+
+			// Make csv filename
+			$arrayToReplace = ['links_','.txt']; // We must delete this sufix and prefix to make csv filename
+			$csvFilename = str_replace( $arrayToReplace, "", $file ); // del unnesessary sufix and prefix
+			$this->csvFile = $csvFilename . ".csv"; // add type to file
+
+		
+
 		if ( !file_exists( $this->csvFolder . $this->csvFile ) ) {
+
+			
+
+
+
 			// Save csv part of the begin into file
 			$properties = "ID,Тип,Артикул,Имя,Опубликован,рекомендуемый?,\"Видимость в каталоге\",\"Короткое описание\",Описание,\"Дата начала действия продажной цены\",\"Дата окончания действия продажной цены\",\"Статус налога\",\"Налоговый класс\",\"В наличии?\",Запасы,\"Малое количество на складе\",\"Задержанный заказ возможен?\",\"Продано индивидуально?\",\"Вес (kg)\",\"Длина (cm)\",\"Ширина (cm)\",\"Высота (cm)\",\"Разрешить отзывы от клиентов?\",\"Примечание к покупке\",\"Цена распродажи\",\"Базовая цена\",Категории,Метки,\"Класс доставки\",Изображения,\"Лимит загрузок\",\"Число дней до просроченной загрузки\",Родительский,\"Сгруппированные товары\",Апсейл,Кросселы,\"Внешний URL\",\"Текст кнопки\",Позиция,\"Мета: yikes_woo_products_tabs\" \r\n";
 
@@ -39,6 +59,13 @@ class PQ {
 			$file = fopen( $this->csvFolder . $this->csvFile, "a+" );
 			fwrite( $file, $properties );
 			fclose( $file );
+		}
+
+		if (file_exists($this->csvFolder . $this->csvFile)) {
+			return 'The file <span style="color: lightgreen">' . $this->csvFile . '</span> was maked';
+		}
+		else {
+			return "Something wrong with pq.php->pQMakeFile";
 		}
 	}
 
@@ -82,7 +109,9 @@ class PQ {
 
 
 
-	// Parse links
+	/*
+	 * Parse links
+	 */ 
 	public function pQParseLinks () {
 
 		// Get html for parsing 
@@ -104,20 +133,31 @@ class PQ {
 			return "0 links has parsed";
 		}
 
-		// Save products links
+		/*
+		 *  Save products links
+		 */
 		$links = array_unique( $links ); // Make unique links
 
 		// Make, open and save file with data
 		$fileName =  str_replace( "html_", "", $this->file ); // Delete prefix "html_"
 
-		$file = fopen( $this->folderToSave . "/links_" . $fileName, "w+" ); // Open file
+		$fileToSave = "links_" . $fileName;
+		$file = fopen( $this->folderToSave . "/". $fileToSave, "w+" ); // Open file
 		fwrite( $file, implode("\r\n", $links) ); // Write data
 		fclose( $file ); // Close file
 
-		return count( $links ) . " links has parsed";
+		// Preparing to a responser
+		$pQParseLinksResponse['count'] = count( $links ) . " links has parsed";
+		$pQParseLinksResponse['fileToSave'] = $fileToSave;
+
+
+
+		return $pQParseLinksResponse;
 	} 
 
-	// Parse images 
+	/*
+	 * Parse images
+	 */  
 	public function pQParseImages() {
 
 		// Make main object

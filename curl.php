@@ -6,6 +6,7 @@ class Curl {
 	public $folderToSave; // Folder where your must to save parsed html
 	public $fileToSave; // File where your must to save parsed html 
 
+	public $response; // Response
 	public $html; // Parsed html
 
 	public $curl_useragent;
@@ -15,11 +16,23 @@ class Curl {
 	public $curl_proxy_path = "proxy.txt";
 
 	// Construct
-	public function __construct( $urlToParse, $folderToSave, $fileToSave ) {
+	public function __construct( $urlToParse ) {
 		$this->urlToParse = $urlToParse;
-		$this->folderToSave = $folderToSave;
-		$this->fileToSave = $fileToSave;
+		$this->folderToSave = 'parse-directory';
 		
+		$fileToSave = parse_url($this->urlToParse);
+		$fileToSave = explode('/', $fileToSave['path']);
+		$this->fileToSave = $fileToSave[2];
+
+		// Check $fileToSave[2];
+		if (empty($this->fileToSave)) {
+
+			return $this->response['curlAlert'] = "Parsed html was not saved";		
+			die();
+
+		}
+
+
 		// Make file name where your must to save parsed html
 		$this->fileToSave = "html_" . $this->fileToSave . ".txt";
 	}
@@ -64,15 +77,24 @@ class Curl {
 	// Curl save html
 	public function curlSave( )
 	{
+		// Preparing to a response. It is need for pq.php
+		$this->response['file'] = $this->fileToSave;
+		$this->response['folderToSave'] = $this->folderToSave;
 
+		// Save
 		if ( file_put_contents( $this->folderToSave . "/" . $this->fileToSave, $this->html ) ) {
 			
-			return "Parsed html was saved in " . $this->folderToSave;
+			// Preparing to a response
+			$this->response['curlAlert'] = "Parsed html was saved in " . $this->folderToSave;
+
+			return $this->response;
 			
 		}
 		else {
 			
-			return "Parsed html was not saved";
+			$this->response['curlAlert'] = "Parsed html was not saved";		
+
+			return $this->response;
 				
 		}
 	}
